@@ -1,5 +1,6 @@
 import Conversation from "../models/conversation.model.js"
 import Message from "../models/messages.model.js"
+import { getRecieverSocketId,io } from "../socket/socket.js"
 
 
 
@@ -37,7 +38,14 @@ export const sendMessage = async (req, res) => {
         {/* await conversation.save()*/ }
         //  await newMessage.save()
 
-        await Promise.all([conversation.save(), newMessage.save()]);
+        await Promise.all([conversation.save(), newMessage.save()]);//This will save changes at once
+
+        //Socket Connection
+        const recieverSocketId= getRecieverSocketId(recieverId)
+          if (recieverSocketId) {
+            // io.to(<socket_id>).emit() used to send events to specific client
+            io.to(recieverSocketId).emit("newMessage", newMessage);
+          }
 
        res.status(201).json(newMessage) 
 
