@@ -14,11 +14,14 @@ export const SocketContextProvider = ({ children }) => {
       const{authUser}=useAuthContext()
     useEffect(() => {
         if (authUser) {
-            const socket = io("http://localhost:5000", {
+            const socket = io(
+              "https://mern-chat-app-4tlr.onrender.com",
+              {
                 query: {
-                    userId:authUser._id
-                }
-            })
+                  userId: authUser._id,
+                },
+              }
+            );
 
             setSocket(socket)
             socket.on("getOnlineUsers", (users) => {
